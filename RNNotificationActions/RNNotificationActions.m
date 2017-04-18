@@ -2,10 +2,10 @@
 #import "RNNotificationActions.h"
 #import "RNNotificationActionsManager.h"
 
-#import "RCTBridge.h"
-#import "RCTConvert.h"
-#import "RCTEventDispatcher.h"
-#import "RCTUtils.h"
+#import <React/RCTBridge.h>
+#import <React/RCTConvert.h>
+#import <React/RCTEventDispatcher.h>
+#import <React/RCTUtils.h>
 
 NSString *const RNNotificationActionReceived = @"NotificationActionReceived";
 
@@ -56,7 +56,7 @@ RCT_EXPORT_MODULE();
 - (void)setBridge:(RCTBridge *)bridge
 {
     _bridge = bridge;
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleNotificationActionReceived:)
                                                  name:RNNotificationActionReceived
@@ -88,14 +88,14 @@ RCT_EXPORT_MODULE();
     UIMutableUserNotificationCategory *category;
     category = [[UIMutableUserNotificationCategory alloc] init];
     [category setIdentifier:[RCTConvert NSString:json[@"identifier"]]];
-    
+
     // Get the actions from the category
     NSMutableArray *actions;
     actions = [[NSMutableArray alloc] init];
     for (NSDictionary *actionJSON in [RCTConvert NSArray:json[@"actions"]]) {
         [actions addObject:[self actionFromJSON:actionJSON]];
     }
-    
+
     // Set these actions for this context
     [category setActions:actions
               forContext:[RCTConvert UIUserNotificationActionContext:json[@"context"]]];
@@ -109,11 +109,11 @@ RCT_EXPORT_METHOD(updateCategories:(NSArray *)json)
     for (NSDictionary *categoryJSON in json) {
         [categories addObject:[self categoryFromJSON:categoryJSON]];
     }
-    
+
     // Get the current types
     UIUserNotificationSettings *settings;
     UIUserNotificationType types = settings.types;
-    
+
     // Update the settings for these types
     [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:types categories:[NSSet setWithArray:categories]]];
 }
